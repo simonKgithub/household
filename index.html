@@ -1949,9 +1949,11 @@ expenseForm.addEventListener(
 		  return;
 		}
 		
-		/*계정 조회*/
-		const { data: expenseAccountData, error: expenseAccountError } =
-		  await client
+		/* 선택한 지출 카테고리에 연결된 EXPENSE 계정 조회 */
+		const {
+			data: expenseAccountData,
+			error: expenseAccountError
+		} = await client
 			.from('accounts')
 			.select('id')
 			.eq('household_id', TEST_HOUSEHOLD_ID)
@@ -1961,17 +1963,16 @@ expenseForm.addEventListener(
 			.maybeSingle();
 
 		if (expenseAccountError) {
-		  console.error(expenseAccountError);
-		  expenseMessage.textContent = expenseAccountError.message;
-		  return;
+			console.error(expenseAccountError);
+			expenseMessage.textContent = expenseAccountError.message;
+			return;
 		}
 
 		if (!expenseAccountData) {
-		  expenseMessage.textContent =
-			'선택한 카테고리에 연결된 지출 계정이 없습니다.';
-		  return;
+			expenseMessage.textContent =
+				'선택한 지출 카테고리에 연결된 지출 계정이 없습니다.';
+			return;
 		}
-
 
         /*
          * 지출은
