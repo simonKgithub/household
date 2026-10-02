@@ -1,0 +1,2738 @@
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>공동 가계부</title>
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                "Noto Sans KR",
+                sans-serif;
+            background: #f5f6f8;
+            color: #222;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 30px 20px 60px;
+        }
+
+        /* =========================
+           공통
+           ========================= */
+
+        .hidden {
+            display: none !important;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        h1,
+        h2,
+        h3,
+        p {
+            margin-top: 0;
+        }
+
+        /* =========================
+           로그인
+           ========================= */
+
+        #login-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            margin-bottom: 8px;
+            font-size: 28px;
+        }
+
+        .logo p {
+            margin: 0;
+            color: #777;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            height: 48px;
+            padding: 0 14px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: #555;
+        }
+
+        .btn {
+            width: 100%;
+            height: 48px;
+            border: 0;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: #222;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #000;
+        }
+
+        .btn-secondary {
+            background: #eee;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #ddd;
+        }
+
+        .login-message {
+            margin-top: 14px;
+            font-size: 14px;
+            text-align: center;
+            color: #d33;
+        }
+
+        .auth-switch {
+            margin-top: 18px;
+            text-align: center;
+            font-size: 14px;
+            color: #777;
+        }
+
+        .auth-switch button {
+            border: 0;
+            background: none;
+            padding: 0;
+            color: #222;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* =========================
+           헤더
+           ========================= */
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 26px;
+        }
+
+        .logout-btn {
+            border: 0;
+            background: #eee;
+            padding: 9px 13px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        /* =========================
+           요약
+           ========================= */
+
+        .summary-title {
+            color: #777;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .summary-amount {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        /* =========================
+           수입 등록
+           ========================= */
+
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .section-title h2 {
+            margin: 0;
+            font-size: 19px;
+        }
+
+        .income-form {
+            display: grid;
+            gap: 14px;
+        }
+
+        .income-form input,
+        .income-form select {
+            width: 100%;
+            height: 46px;
+            padding: 0 12px;
+            border: 1px solid #ddd;
+            border-radius: 9px;
+            background: #fff;
+        }
+
+        .income-form input:focus,
+        .income-form select:focus {
+            outline: none;
+            border-color: #555;
+        }
+
+        /* =========================
+           거래 목록
+           ========================= */
+
+        .transaction-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .transaction-item:last-child {
+            border-bottom: 0;
+        }
+
+        .transaction-left {
+            min-width: 0;
+        }
+
+        .transaction-description {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .transaction-date {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .transaction-amount {
+            font-weight: 700;
+            white-space: nowrap;
+            margin-left: 20px;
+        }
+
+        .empty {
+            padding: 30px 0;
+            text-align: center;
+            color: #999;
+            font-size: 14px;
+        }
+
+        /* =========================
+           상태
+           ========================= */
+
+        #loading {
+            position: fixed;
+            inset: 0;
+            background: rgba(255,255,255,.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            font-size: 15px;
+        }
+
+        .info {
+            font-size: 13px;
+            color: #777;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 520px) {
+            .container {
+                padding: 20px 15px 40px;
+            }
+
+            .card {
+                padding: 20px;
+                border-radius: 14px;
+            }
+
+            .header h1 {
+                font-size: 23px;
+            }
+
+            .summary-amount {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- =========================
+     로딩
+     ========================= -->
+
+<div id="loading">
+    확인 중...
+</div>
+
+
+<!-- =========================
+     로그인
+     ========================= -->
+
+<section id="login-section" class="hidden">
+    <div class="container">
+
+        <div class="card login-card">
+
+            <div class="logo">
+                <h1>공동 가계부</h1>
+                <p>우리 가족의 돈 흐름을 한눈에</p>
+            </div>
+
+            <div id="login-form">
+
+                <div class="form-group">
+                    <label for="login-email">이메일</label>
+                    <input
+                        type="email"
+                        id="login-email"
+                        placeholder="이메일을 입력하세요"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="login-password">비밀번호</label>
+                    <input
+                        type="password"
+                        id="login-password"
+                        placeholder="비밀번호를 입력하세요"
+                    >
+                </div>
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    id="login-btn"
+                >
+                    로그인
+                </button>
+
+                <div class="login-message" id="login-message"></div>
+
+                <div class="auth-switch">
+                    계정이 없나요?
+                    <button type="button" id="show-signup-btn">
+                        회원가입
+                    </button>
+                </div>
+
+            </div>
+
+
+            <!-- 회원가입 -->
+
+            <div id="signup-form" class="hidden">
+
+                <div class="form-group">
+                    <label for="signup-email">이메일</label>
+                    <input
+                        type="email"
+                        id="signup-email"
+                        placeholder="이메일을 입력하세요"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="signup-password">비밀번호</label>
+                    <input
+                        type="password"
+                        id="signup-password"
+                        placeholder="비밀번호를 입력하세요"
+                    >
+                </div>
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    id="signup-btn"
+                >
+                    회원가입
+                </button>
+
+                <div class="login-message" id="signup-message"></div>
+
+                <div class="auth-switch">
+                    이미 계정이 있나요?
+                    <button type="button" id="show-login-btn">
+                        로그인
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+
+<!-- =========================
+     가계부
+     ========================= -->
+
+<section id="app-section" class="hidden">
+
+    <div class="container">
+
+        <header class="header">
+
+            <h1>공동 가계부</h1>
+
+            <button
+                type="button"
+                class="logout-btn"
+                id="logout-btn"
+            >
+                로그아웃
+            </button>
+
+        </header>
+
+
+        <!-- 사용자 정보 -->
+
+        <div class="card">
+
+            <div class="summary-title">
+                로그인 계정
+            </div>
+
+            <div id="user-email">
+                -
+            </div>
+
+            <p class="info" id="household-info">
+                household 확인 중...
+            </p>
+
+        </div>
+
+
+        <!-- 요약 -->
+		<div class="card">
+		
+			<div class="summary">
+
+				<div class="summary-item">
+					<div class="summary-label">
+						이번 달 수입
+					</div>
+
+					<div
+						class="summary-amount"
+						id="monthly-income"
+					>
+						0원
+					</div>
+				</div>
+
+
+				<div class="summary-item">
+					<div class="summary-label">
+						이번 달 지출
+					</div>
+
+					<div
+						class="summary-amount"
+						id="monthly-expense"
+					>
+						0원
+					</div>
+				</div>
+
+
+				<div class="summary-item">
+					<div class="summary-label">
+						이번 달 잔액
+					</div>
+
+					<div
+						class="summary-amount"
+						id="monthly-balance"
+					>
+						0원
+					</div>
+				</div>
+			
+			</div>
+			
+		</div>
+		
+		<div class="card">
+			<div class="section-title">
+				<h2>자산 현황</h2>
+			</div>
+
+			<div class="summary">
+				<div class="summary-item">
+					<div class="summary-label">
+						총자산
+					</div>
+
+					<div
+						class="summary-amount"
+						id="total-assets"
+					>
+						0원
+					</div>
+				</div>
+
+				<div class="summary-item">
+					<div class="summary-label">
+						총부채
+					</div>
+
+					<div
+						class="summary-amount"
+						id="total-liabilities"
+					>
+						0원
+					</div>
+				</div>
+
+				<div class="summary-item">
+					<div class="summary-label">
+						순자산
+					</div>
+
+					<div
+						class="summary-amount"
+						id="net-worth"
+					>
+						0원
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="card">
+			<div class="section-title">
+				<h2>보유 계좌</h2>
+			</div>
+
+			<div id="asset-account-list">
+				<div class="empty">
+					계좌 정보를 불러오는 중입니다.
+				</div>
+			</div>
+		</div>
+
+
+		<div class="card">
+			<div class="section-title">
+				<h2>부채</h2>
+			</div>
+
+			<div id="liability-account-list">
+				<div class="empty">
+					부채 정보를 불러오는 중입니다.
+				</div>
+			</div>
+		</div>
+
+        
+
+
+        <!-- 수입 등록 -->
+
+        <div class="card">
+
+            <div class="section-title">
+                <h2>수입 등록</h2>
+            </div>
+
+            <form
+                class="income-form"
+                id="income-form"
+            >
+
+                <input
+                    type="date"
+                    id="income-date"
+                    required
+                >
+
+                <input
+                    type="text"
+                    id="income-description"
+                    placeholder="예: 월급"
+                    required
+                >
+
+                <input
+                    type="number"
+                    id="income-amount"
+                    placeholder="금액"
+                    min="1"
+                    step="1"
+                    required
+                >
+				
+				<label for="income-category">카테고리</label>
+				<select id="income-category">
+				  <option value="">선택하세요</option>
+				</select>
+
+                <select
+                    id="income-account"
+                    required
+                >
+                    <option value="">
+                        입금 계좌 선택
+                    </option>
+                </select>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    수입 등록
+                </button>
+
+            </form>
+
+            <div
+                class="login-message"
+                id="income-message"
+            ></div>
+
+        </div>
+		<!-- =========================
+		 지출 등록
+		 ========================= -->
+
+		<div class="card">
+
+			<div class="section-title">
+				<h2>지출 등록</h2>
+			</div>
+
+			<form
+				class="income-form"
+				id="expense-form"
+			>
+
+				<input
+					type="date"
+					id="expense-date"
+					required
+				>
+
+				<input
+					type="text"
+					id="expense-description"
+					placeholder="예: 점심 식사"
+					required
+				>
+
+				<input
+					type="number"
+					id="expense-amount"
+					placeholder="금액"
+					min="1"
+					step="1"
+					required
+				>
+
+				<label for="expense-category">카테고리</label>
+				<select id="expense-category">
+				  <option value="">선택하세요</option>
+				</select>
+				
+				<select
+					id="expense-account"
+					required
+				>
+					<option value="">
+						지출 계좌 선택
+					</option>
+				</select>
+
+				<button
+					type="submit"
+					class="btn btn-primary"
+				>
+					지출 등록
+				</button>
+
+			</form>
+
+			<div
+				class="login-message"
+				id="expense-message"
+			></div>
+
+		</div>
+
+
+        <!-- =========================
+             이체 등록
+             ========================= -->
+
+        <div class="card">
+
+            <div class="section-title">
+                <h2>이체 등록</h2>
+            </div>
+
+            <form class="income-form" id="transfer-form">
+
+                <input type="date" id="transfer-date" required>
+
+                <input
+                    type="text"
+                    id="transfer-description"
+                    placeholder="예: 생활비 이체"
+                    required
+                >
+
+                <input
+                    type="number"
+                    id="transfer-amount"
+                    placeholder="금액"
+                    min="1"
+                    step="1"
+                    required
+                >
+
+                <select id="transfer-source-account" required>
+                    <option value="">출금 계좌 선택</option>
+                </select>
+
+                <select id="transfer-target-account" required>
+                    <option value="">입금 계좌 선택</option>
+                </select>
+
+                <button type="submit" class="btn btn-primary">
+                    이체 등록
+                </button>
+
+            </form>
+
+            <div class="login-message" id="transfer-message"></div>
+
+        </div>
+
+
+        <!-- 수입 목록 -->
+		<div class="card">
+
+			<div class="section-title">
+				<h2>최근 수입</h2>
+			</div>
+
+			<div
+				class="transaction-list"
+				id="income-list"
+			>
+				<div class="empty">
+					수입 내역이 없습니다.
+				</div>
+			</div>
+
+		</div>
+
+
+		<!-- 지출 목록 -->
+		<div class="card">
+
+			<div class="section-title">
+				<h2>최근 지출</h2>
+			</div>
+
+			<div
+				class="transaction-list"
+				id="expense-list"
+			>
+				<div class="empty">
+					지출 내역이 없습니다.
+				</div>
+			</div>
+
+		</div>
+
+
+
+        <!-- 이체 목록 -->
+        <div class="card">
+
+            <div class="section-title">
+                <h2>최근 이체</h2>
+            </div>
+
+            <div class="transaction-list" id="transfer-list">
+                <div class="empty">
+                    이체 내역이 없습니다.
+                </div>
+            </div>
+
+        </div>
+    </div>
+	
+	<div
+		class="card hidden"
+		id="account-transaction-card"
+	>
+
+		<div class="section-title">
+			<h2 id="selected-account-name">
+				계좌 거래내역
+			</h2>
+		</div>
+
+		<div
+			class="transaction-list"
+			id="account-transaction-list"
+		>
+			<div class="empty">
+				거래 내역이 없습니다.
+			</div>
+		</div>
+
+	</div>
+
+</section>
+
+
+<script>
+
+/* =========================================================
+   Supabase 설정
+   ========================================================= */
+
+const SUPABASE_URL =
+    'https://dyhqrfputxdvndcvlyvn.supabase.co';
+
+const SUPABASE_KEY =
+    'sb_publishable_vOrzCBWnMCez2rAhZgu-cQ_tT4ig5bG';
+
+
+const {
+    createClient
+} = supabase;
+
+
+const client =
+    createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* =========================================================
+   테스트 household
+   ========================================================= */
+
+const TEST_HOUSEHOLD_ID =
+    'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa';
+
+
+/* =========================================================
+   DOM
+   ========================================================= */
+
+const loading =
+    document.querySelector('#loading');
+
+const loginSection =
+    document.querySelector('#login-section');
+
+const appSection =
+    document.querySelector('#app-section');
+
+const loginEmail =
+    document.querySelector('#login-email');
+
+const loginPassword =
+    document.querySelector('#login-password');
+
+const loginBtn =
+    document.querySelector('#login-btn');
+
+const loginMessage =
+    document.querySelector('#login-message');
+
+const signupEmail =
+    document.querySelector('#signup-email');
+
+const signupPassword =
+    document.querySelector('#signup-password');
+
+const signupBtn =
+    document.querySelector('#signup-btn');
+
+const signupMessage =
+    document.querySelector('#signup-message');
+
+const loginForm =
+    document.querySelector('#login-form');
+
+const signupForm =
+    document.querySelector('#signup-form');
+
+const userEmail =
+    document.querySelector('#user-email');
+
+const householdInfo =
+    document.querySelector('#household-info');
+
+const logoutBtn =
+    document.querySelector('#logout-btn');
+
+const incomeForm =
+    document.querySelector('#income-form');
+
+const incomeDate =
+    document.querySelector('#income-date');
+
+const incomeDescription =
+    document.querySelector('#income-description');
+
+const incomeAmount =
+    document.querySelector('#income-amount');
+
+const incomeAccount =
+    document.querySelector('#income-account');
+
+const incomeMessage =
+    document.querySelector('#income-message');
+
+const incomeList =
+    document.querySelector('#income-list');
+	
+const expenseList =
+    document.querySelector('#expense-list');
+
+const monthlyIncome =
+    document.querySelector('#monthly-income');
+
+const expenseForm =
+    document.querySelector('#expense-form');
+
+const expenseDate =
+    document.querySelector('#expense-date');
+
+const expenseDescription =
+    document.querySelector('#expense-description');
+
+const expenseAmount =
+    document.querySelector('#expense-amount');
+
+const expenseAccount =
+    document.querySelector('#expense-account');
+
+const expenseMessage =
+    document.querySelector('#expense-message');
+
+const transferForm =
+    document.querySelector('#transfer-form');
+
+const transferDate =
+    document.querySelector('#transfer-date');
+
+const transferDescription =
+    document.querySelector('#transfer-description');
+
+const transferAmount =
+    document.querySelector('#transfer-amount');
+
+const transferSourceAccount =
+    document.querySelector('#transfer-source-account');
+
+const transferTargetAccount =
+    document.querySelector('#transfer-target-account');
+
+const transferMessage =
+    document.querySelector('#transfer-message');
+
+const transferList =
+    document.querySelector('#transfer-list');
+
+const monthlyExpense =
+    document.querySelector('#monthly-expense');
+
+const monthlyBalanceElement =
+    document.querySelector('#monthly-balance');
+
+const showSignupBtn =
+    document.querySelector('#show-signup-btn');
+
+const showLoginBtn =
+    document.querySelector('#show-login-btn');
+
+const incomeCategory =
+  document.querySelector('#income-category');
+
+const expenseCategory =
+  document.querySelector('#expense-category');
+  
+const assetAccountList =
+    document.querySelector('#asset-account-list');
+
+const liabilityAccountList =
+    document.querySelector('#liability-account-list');
+	
+const totalAssetsElement =
+    document.querySelector('#total-assets');
+
+const totalLiabilitiesElement =
+    document.querySelector('#total-liabilities');
+
+const netWorthElement =
+    document.querySelector('#net-worth');
+	
+const accountTransactionCard =
+    document.querySelector(
+        '#account-transaction-card'
+    );
+
+const selectedAccountName =
+    document.querySelector(
+        '#selected-account-name'
+    );
+
+const accountTransactionList =
+    document.querySelector(
+        '#account-transaction-list'
+    );
+	
+/* =========================================================
+   초기 날짜
+   ========================================================= */
+
+incomeDate.value =
+    new Date()
+        .toISOString()
+        .slice(0, 10);
+
+expenseDate.value =
+    new Date()
+        .toISOString()
+        .slice(0, 10);
+
+transferDate.value =
+    new Date()
+        .toISOString()
+        .slice(0, 10);
+		
+/* =========================================================
+   로그인 / 회원가입 화면
+   ========================================================= */
+
+showSignupBtn.addEventListener(
+    'click',
+    () => {
+
+        loginForm.classList.add('hidden');
+        signupForm.classList.remove('hidden');
+
+        loginMessage.textContent = '';
+    }
+);
+
+
+showLoginBtn.addEventListener(
+    'click',
+    () => {
+
+        signupForm.classList.add('hidden');
+        loginForm.classList.remove('hidden');
+
+        signupMessage.textContent = '';
+    }
+);
+
+
+/* =========================================================
+   회원가입
+   ========================================================= */
+
+signupBtn.addEventListener(
+    'click',
+    async () => {
+
+        signupMessage.textContent = '';
+
+        const email =
+            signupEmail.value.trim();
+
+        const password =
+            signupPassword.value;
+
+        if (!email || !password) {
+
+            signupMessage.textContent =
+                '이메일과 비밀번호를 입력해주세요.';
+
+            return;
+        }
+
+        if (password.length < 6) {
+
+            signupMessage.textContent =
+                '비밀번호는 6자 이상 입력해주세요.';
+
+            return;
+        }
+
+
+        signupBtn.disabled = true;
+
+        const {
+            data,
+            error
+        } = await client.auth.signUp({
+
+            email,
+            password
+
+        });
+
+
+        signupBtn.disabled = false;
+
+
+        if (error) {
+
+            signupMessage.textContent =
+                error.message;
+
+            return;
+        }
+
+
+        /*
+         * 이메일 인증이 켜져 있으면
+         * 바로 로그인되지 않을 수 있음
+         */
+
+        if (!data.session) {
+
+            signupMessage.style.color =
+                '#287a3e';
+
+            signupMessage.textContent =
+                '회원가입 완료! 이메일 인증 후 로그인해주세요.';
+
+            return;
+        }
+
+
+        signupMessage.style.color =
+            '#287a3e';
+
+        signupMessage.textContent =
+            '회원가입 완료!';
+
+    }
+);
+
+
+/* =========================================================
+   로그인
+   ========================================================= */
+
+loginBtn.addEventListener(
+    'click',
+    login
+);
+
+
+loginPassword.addEventListener(
+    'keydown',
+    event => {
+
+        if (event.key === 'Enter') {
+            login();
+        }
+
+    }
+);
+
+
+async function login() {
+
+    loginMessage.textContent = '';
+
+    const email =
+        loginEmail.value.trim();
+
+    const password =
+        loginPassword.value;
+
+
+    if (!email || !password) {
+
+        loginMessage.textContent =
+            '이메일과 비밀번호를 입력해주세요.';
+
+        return;
+    }
+
+
+    loginBtn.disabled = true;
+
+    const {
+        data,
+        error
+    } = await client.auth.signInWithPassword({
+
+        email,
+        password
+
+    });
+
+
+    loginBtn.disabled = false;
+
+
+    if (error) {
+
+        loginMessage.textContent =
+            error.message;
+
+        return;
+    }
+
+
+    await showApp(data.user);
+
+}
+
+
+/* =========================================================
+   로그아웃
+   ========================================================= */
+
+logoutBtn.addEventListener(
+    'click',
+    async () => {
+
+        await client.auth.signOut();
+
+        showLogin();
+
+    }
+);
+
+
+/* =========================================================
+   로그인 화면
+   ========================================================= */
+
+function showLogin() {
+
+    loading.classList.add('hidden');
+
+    appSection.classList.add('hidden');
+
+    loginSection.classList.remove('hidden');
+
+}
+
+
+/* =========================================================
+   가계부 화면
+   ========================================================= */
+
+async function showApp(user) {
+
+    loginSection.classList.add('hidden');
+
+    appSection.classList.remove('hidden');
+
+    userEmail.textContent =
+        user.email || '-';
+
+
+    /*
+     * 현재 테스트 household
+     * 사용자가 실제 구성원인지 확인
+     */
+
+    const {
+        data: member,
+        error
+    } = await client
+        .from('household_members')
+        .select('household_id, role')
+        .eq(
+            'household_id',
+            TEST_HOUSEHOLD_ID
+        )
+        .eq(
+            'user_id',
+            user.id
+        )
+        .maybeSingle();
+
+
+    if (error) {
+
+        console.error(error);
+
+        householdInfo.textContent =
+            'household 확인 중 오류가 발생했습니다.';
+
+        return;
+    }
+
+
+    if (!member) {
+
+        householdInfo.textContent =
+            '이 household의 구성원이 아닙니다.';
+
+        return;
+    }
+
+
+    householdInfo.textContent =
+        `가계부 권한: ${member.role}`;
+
+
+    await loadTransactionsAccounts();
+
+	await loadCategories();
+
+    await loadTransactions();
+	
+	await loadAccounts();
+	
+
+}
+
+
+/* =========================================================
+   수입, 지출 계좌 조회
+   ========================================================= */
+
+async function loadTransactionsAccounts() {
+
+    incomeAccount.innerHTML =
+        '<option value="">입금 계좌 선택</option>';
+
+	expenseAccount.innerHTML =
+		'<option value="">지출 계좌 선택</option>';
+
+    transferSourceAccount.innerHTML =
+        '<option value="">출금 계좌 선택</option>';
+
+    transferTargetAccount.innerHTML =
+        '<option value="">입금 계좌 선택</option>';
+
+    const {
+        data,
+        error
+    } = await client
+        .from('accounts')
+        .select(`
+            id,
+            name,
+            account_type
+        `)
+        .eq(
+            'household_id',
+            TEST_HOUSEHOLD_ID
+        )
+        .eq(
+            'is_active',
+            true
+        )
+        .in(
+            'account_type',
+            ['ASSET', 'SAVING']
+        )
+        .order(
+            'name'
+        );
+
+
+    if (error) {
+
+        console.error(error);
+
+        incomeMessage.textContent =
+            '계좌를 불러오지 못했습니다.';
+
+        return;
+    }
+
+
+    data.forEach(account => {
+
+        const option =
+            document.createElement('option');
+
+        option.value =
+            account.id;
+
+        option.textContent =
+            `${account.name} (${account.account_type})`;
+
+        incomeAccount.appendChild(option);
+
+    });
+	
+	data.forEach(account => {
+
+		const option =
+			document.createElement('option');
+
+		option.value =
+			account.id;
+
+		option.textContent =
+			`${account.name} (${account.account_type})`;
+
+		expenseAccount.appendChild(option);
+
+	});
+
+    data.forEach(account => {
+
+        const sourceOption =
+            document.createElement('option');
+
+        sourceOption.value =
+            account.id;
+
+        sourceOption.textContent =
+            `${account.name} (${account.account_type})`;
+
+        transferSourceAccount.appendChild(sourceOption);
+
+        const targetOption =
+            document.createElement('option');
+
+        targetOption.value =
+            account.id;
+
+        targetOption.textContent =
+            `${account.name} (${account.account_type})`;
+
+        transferTargetAccount.appendChild(targetOption);
+
+    });
+}
+/* =========================================================
+   카테고리 조회
+   ========================================================= */
+   
+async function loadCategories() {
+  const { data, error } = await client
+    .from('categories')
+    .select(`
+      id,
+      name,
+      account_type,
+      parent_id,
+      display_order
+    `)
+    .eq('household_id', TEST_HOUSEHOLD_ID)
+    .eq('is_active', true)
+    .in('account_type', ['INCOME', 'EXPENSE'])
+    .not('parent_id', 'is', null)
+    .order('account_type')
+    .order('display_order');
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  incomeCategory.innerHTML = '<option value="">선택하세요</option>';
+  expenseCategory.innerHTML = '<option value="">선택하세요</option>';
+
+  data.forEach(category => {
+    const option = document.createElement('option');
+
+    option.value = category.id;
+    option.textContent = category.name;
+
+    if (category.account_type === 'INCOME') {
+      incomeCategory.appendChild(option);
+    }
+
+    if (category.account_type === 'EXPENSE') {
+      expenseCategory.appendChild(option.cloneNode(true));
+    }
+  });
+}
+
+/* =========================================================
+   계좌 잔액 조회
+   ========================================================= */
+async function loadAccounts() {
+
+    const {
+        data,
+        error
+    } = await client
+        .from('v_account_balances')
+        .select(`
+            account_id,
+            account_name,
+            account_type,
+            current_balance
+        `)
+        .eq(
+            'household_id',
+            TEST_HOUSEHOLD_ID
+        );
+
+    if (error) {
+        console.error(error);
+
+        assetAccountList.innerHTML = `
+            <div class="empty">
+                계좌 정보를 불러오지 못했습니다.
+            </div>
+        `;
+
+        liabilityAccountList.innerHTML = `
+            <div class="empty">
+                부채 정보를 불러오지 못했습니다.
+            </div>
+        `;
+
+        return;
+    }
+	
+    assetAccountList.innerHTML = '';
+    liabilityAccountList.innerHTML = '';
+
+
+    const assetAccounts =
+        data.filter(account =>
+            account.account_type === 'ASSET' ||
+            account.account_type === 'SAVING'
+        );
+
+
+    const liabilityAccounts =
+        data.filter(account =>
+            account.account_type === 'LIABILITY'
+        );
+		
+	let totalAccountAssets = 0;
+	let totalLiabilities = 0;
+
+
+    /* =========================
+       보유 계좌
+       ========================= */
+
+    if (!assetAccounts.length) {
+
+        assetAccountList.innerHTML = `
+            <div class="empty">
+                등록된 계좌가 없습니다.
+            </div>
+        `;
+
+    } else {
+
+        assetAccounts.forEach(account => {
+
+			const item =
+				document.createElement('div');
+
+			item.className =
+				'transaction-item';
+
+			const balance =
+				Number(account.current_balance || 0);
+
+			item.innerHTML = `
+				<div class="transaction-left">
+
+					<div class="transaction-description">
+						${escapeHtml(account.account_name)}
+					</div>
+
+					<div class="transaction-date">
+						${
+							account.account_type === 'SAVING'
+								? '저축'
+								: '계좌'
+						}
+					</div>
+
+				</div>
+
+				<div class="transaction-amount">
+					${formatNumber(balance)}원
+				</div>
+			`;
+
+			item.style.cursor = 'pointer';
+
+			item.addEventListener(
+				'click',
+				() => {
+					showAccountTransactions(
+						account.account_id,
+						account.account_name
+					);
+				}
+			);
+
+			assetAccountList.appendChild(item);
+
+			totalAccountAssets +=
+				Number(account.current_balance || 0);
+			
+        });
+    }
+
+
+    /* =========================
+       부채
+       ========================= */
+
+    if (!liabilityAccounts.length) {
+
+        liabilityAccountList.innerHTML = `
+            <div class="empty">
+                등록된 부채가 없습니다.
+            </div>
+        `;
+
+    } else {
+
+        liabilityAccounts.forEach(account => {
+
+            const item =
+                document.createElement('div');
+
+            item.className =
+                'transaction-item';
+
+            const balance =
+                Number(account.current_balance || 0);
+
+            item.innerHTML = `
+                <div class="transaction-left">
+
+                    <div class="transaction-description">
+                        ${escapeHtml(account.account_name)}
+                    </div>
+
+                    <div class="transaction-date">
+                        부채
+                    </div>
+
+                </div>
+
+                <div class="transaction-amount">
+                    ${formatNumber(Math.abs(balance))}원
+                </div>
+            `;
+
+            liabilityAccountList.appendChild(item);
+
+			totalLiabilities += Math.abs(
+				Number(account.current_balance  || 0)
+			);
+        });
+    }
+	
+	const totalAssets = totalAccountAssets;
+
+	const netWorth =
+		totalAssets - totalLiabilities;
+	
+	totalAssetsElement.textContent =
+    `${formatNumber(totalAssets)}원`;
+
+	totalLiabilitiesElement.textContent =
+		`${formatNumber(totalLiabilities)}원`;
+
+	netWorthElement.textContent =
+		`${formatNumber(netWorth)}원`;
+}
+
+/* =========================================================
+   수입 등록
+   ========================================================= */
+
+incomeForm.addEventListener(
+    'submit',
+    async event => {
+
+        event.preventDefault();
+
+        incomeMessage.textContent = '';
+
+        const date =
+            incomeDate.value;
+
+        const description =
+            incomeDescription.value.trim();
+
+        const amount =
+            Number(incomeAmount.value);
+
+        const accountId =
+            incomeAccount.value;
+
+
+        if (!date ||
+            !description ||
+            !amount ||
+            !accountId) {
+
+            incomeMessage.textContent =
+                '모든 항목을 입력해주세요.';
+
+            return;
+        }
+		if (!incomeCategory.value) {
+			
+			incomeMessage.textContent = '카테고리를 선택해주세요.';
+		
+			return;
+		}
+		const categoryId = incomeCategory.value;
+
+		/* 선택한 수입 카테고리에 연결된 INCOME 계좌 조회 */
+		const {
+			data: incomeAccountData,
+			error: incomeAccountError
+		} = await client
+			.from('accounts')
+			.select('id')
+			.eq('household_id', TEST_HOUSEHOLD_ID)
+			.eq('category_id', categoryId)
+			.eq('account_type', 'INCOME')
+			.eq('is_active', true)
+			.maybeSingle();
+
+		if (incomeAccountError) {
+
+			console.error(incomeAccountError);
+
+			incomeMessage.textContent =
+				incomeAccountError.message;
+
+			return;
+		}
+
+		if (!incomeAccountData) {
+
+			incomeMessage.textContent =
+				'선택한 수입 카테고리에 연결된 수입 계좌가 없습니다.';
+
+			return;
+		}
+
+
+        /*
+         * 수입은:
+         *
+         * INCOME 계정 CREDIT
+         * 실제 입금 계좌 DEBIT
+         *
+         * 로 기록해야 한다.
+         *
+         * 기존 create_transaction()
+         * RPC를 사용한다.
+         */
+
+
+        const {
+            data,
+            error
+        } = await client.rpc(
+            'create_transaction',
+            {
+                p_household_id:
+                    TEST_HOUSEHOLD_ID,
+
+                p_transaction_date:
+                    date,
+
+                p_transaction_type:
+                    'INCOME',
+
+                p_description:
+                    description,
+
+                p_total_amount:
+                    amount,
+
+                p_category_id:
+                    incomeCategory.value,
+
+                p_entries:
+                    [
+                        {
+                            account_id:
+                                accountId,
+
+                            entry_type:
+                                'DEBIT',
+
+                            amount:
+                                amount
+                        },
+
+                        {
+                            account_id:
+                                incomeAccountData.id,
+
+                            entry_type:
+                                'CREDIT',
+
+                            amount:
+                                amount
+                        }
+                    ]
+            }
+        );
+
+
+        if (error) {
+
+            console.error(error);
+
+            incomeMessage.textContent =
+                error.message;
+
+            return;
+        }
+
+
+        incomeMessage.style.color =
+            '#287a3e';
+
+        incomeMessage.textContent =
+            '수입이 등록되었습니다.';
+
+
+        incomeDescription.value = '';
+        incomeAmount.value = '';
+        incomeAccount.value = '';
+
+
+        await loadTransactions();
+
+    }
+);
+
+/* =========================================================
+   지출 등록
+   ========================================================= */
+
+expenseForm.addEventListener(
+    'submit',
+    async event => {
+
+        event.preventDefault();
+
+        expenseMessage.textContent = '';
+        expenseMessage.style.color = '#d33';
+
+        const date =
+            expenseDate.value;
+
+        const description =
+            expenseDescription.value.trim();
+
+        const amount =
+            Number(expenseAmount.value);
+
+        const accountId =
+            expenseAccount.value;
+
+
+        if (
+            !date ||
+            !description ||
+            !amount ||
+            !accountId
+        ) {
+
+            expenseMessage.textContent =
+                '모든 항목을 입력해주세요.';
+
+            return;
+        }
+		
+		const categoryId = expenseCategory.value;
+
+		if (!categoryId) {
+		  expenseMessage.textContent = '카테고리를 선택해주세요.';
+		  return;
+		}
+		
+		/*계정 조회*/
+		const { data: expenseAccountData, error: expenseAccountError } =
+		  await client
+			.from('accounts')
+			.select('id')
+			.eq('household_id', TEST_HOUSEHOLD_ID)
+			.eq('category_id', categoryId)
+			.eq('account_type', 'EXPENSE')
+			.eq('is_active', true)
+			.maybeSingle();
+
+		if (expenseAccountError) {
+		  console.error(expenseAccountError);
+		  expenseMessage.textContent = expenseAccountError.message;
+		  return;
+		}
+
+		if (!expenseAccountData) {
+		  expenseMessage.textContent =
+			'선택한 카테고리에 연결된 지출 계정이 없습니다.';
+		  return;
+		}
+
+
+        /*
+         * 지출은
+         *
+         * EXPENSE 계정 DEBIT
+         * 실제 출금 계좌 CREDIT
+         *
+         * 으로 기록한다.
+         */
+
+
+        const {
+            data,
+            error
+        } = await client.rpc(
+            'create_transaction',
+            {
+                p_household_id:
+                    TEST_HOUSEHOLD_ID,
+
+                p_transaction_date:
+                    date,
+
+                p_transaction_type:
+                    'EXPENSE',
+
+                p_description:
+                    description,
+
+                p_total_amount:
+                    amount,
+
+                p_category_id:
+                    categoryId,
+
+                p_entries:
+                    [
+                        {
+                            account_id:
+                                expenseAccountData.id,
+
+                            entry_type:
+                                'DEBIT',
+
+                            amount:
+                                amount
+                        },
+
+                        {
+                            account_id:
+                                accountId,
+
+                            entry_type:
+                                'CREDIT',
+
+                            amount:
+                                amount
+                        }
+                    ]
+            }
+        );
+
+
+        if (error) {
+
+            console.error(error);
+
+            expenseMessage.textContent =
+                error.message;
+
+            return;
+        }
+
+
+        expenseMessage.style.color =
+            '#287a3e';
+
+        expenseMessage.textContent =
+            '지출이 등록되었습니다.';
+
+
+        expenseDescription.value = '';
+        expenseAmount.value = '';
+        expenseAccount.value = '';
+
+
+        await loadTransactions();
+
+    }
+);
+
+/* =========================================================
+   이체 등록
+   ========================================================= */
+
+transferForm.addEventListener(
+    'submit',
+    async event => {
+
+        event.preventDefault();
+
+        transferMessage.textContent = '';
+        transferMessage.style.color = '#d33';
+
+        const date =
+            transferDate.value;
+
+        const description =
+            transferDescription.value.trim();
+
+        const amount =
+            Number(transferAmount.value);
+
+        const sourceAccountId =
+            transferSourceAccount.value;
+
+        const targetAccountId =
+            transferTargetAccount.value;
+
+        if (!date ||
+            !description ||
+            !amount ||
+            !sourceAccountId ||
+            !targetAccountId) {
+
+            transferMessage.textContent =
+                '모든 항목을 입력해주세요.';
+
+            return;
+        }
+
+        if (sourceAccountId === targetAccountId) {
+
+            transferMessage.textContent =
+                '출금 계좌와 입금 계좌는 같을 수 없습니다.';
+
+            return;
+        }
+
+        const {
+            data,
+            error
+        } = await client.rpc(
+            'create_transaction',
+            {
+                p_household_id:
+                    TEST_HOUSEHOLD_ID,
+
+                p_transaction_date:
+                    date,
+
+                p_transaction_type:
+                    'TRANSFER',
+
+                p_description:
+                    description,
+
+                p_total_amount:
+                    amount,
+
+                p_category_id:
+                    null,
+
+                p_entries:
+                    [
+                        {
+                            account_id:
+                                sourceAccountId,
+
+                            entry_type:
+                                'CREDIT',
+
+                            amount:
+                                amount
+                        },
+
+                        {
+                            account_id:
+                                targetAccountId,
+
+                            entry_type:
+                                'DEBIT',
+
+                            amount:
+                                amount
+                        }
+                    ]
+            }
+        );
+
+        if (error) {
+
+            console.error(error);
+
+            transferMessage.textContent =
+                error.message;
+
+            return;
+        }
+
+        transferMessage.style.color =
+            '#287a3e';
+
+        transferMessage.textContent =
+            '이체가 등록되었습니다.';
+
+        transferDescription.value = '';
+        transferAmount.value = '';
+        transferSourceAccount.value = '';
+        transferTargetAccount.value = '';
+
+        await loadTransactions();
+        await loadAccounts();
+    }
+);
+
+/* =========================================================
+   이번 달 거래 조회
+   ========================================================= */
+
+async function loadTransactions() {
+
+    const startDate =
+        '2026-10-01';
+
+    const endDate =
+        '2026-11-01';
+
+
+    const {
+        data,
+        error
+    } = await client
+        .from('transactions')
+        .select(`
+            id,
+            transaction_date,
+            transaction_type,
+            description,
+            total_amount,
+            status
+        `)
+        .eq(
+            'household_id',
+            TEST_HOUSEHOLD_ID
+        )
+        .eq(
+            'status',
+            'CONFIRMED'
+        )
+        .in(
+            'transaction_type',
+            [
+                'INCOME',
+                'EXPENSE',
+                'TRANSFER'
+            ]
+        )
+        .gte(
+            'transaction_date',
+            startDate
+        )
+        .lt(
+            'transaction_date',
+            endDate
+        )
+        .order(
+            'transaction_date',
+            {
+                ascending: false
+            }
+        );
+
+
+    if (error) {
+
+        console.error(error);
+
+        incomeList.innerHTML = `
+            <div class="empty">
+                수입 내역을 불러오지 못했습니다.
+            </div>
+        `;
+
+        expenseList.innerHTML = `
+            <div class="empty">
+                지출 내역을 불러오지 못했습니다.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    let incomeTotal = 0;
+    let expenseTotal = 0;
+
+
+    incomeList.innerHTML = '';
+    expenseList.innerHTML = '';
+    transferList.innerHTML = '';
+
+
+    const incomeData =
+        data.filter(
+            transaction =>
+                transaction.transaction_type === 'INCOME'
+        );
+
+
+    const expenseData =
+        data.filter(
+            transaction =>
+                transaction.transaction_type === 'EXPENSE'
+        );
+
+    const transferData =
+        data.filter(
+            transaction =>
+                transaction.transaction_type === 'TRANSFER'
+        );
+
+
+    /* =========================
+       수입
+       ========================= */
+
+    if (!incomeData.length) {
+
+        incomeList.innerHTML = `
+            <div class="empty">
+                수입 내역이 없습니다.
+            </div>
+        `;
+
+    } else {
+
+        incomeData.forEach(transaction => {
+
+            const amount =
+                Number(transaction.total_amount);
+
+            incomeTotal += amount;
+
+
+            const item =
+                document.createElement('div');
+
+            item.className =
+                'transaction-item';
+
+
+            item.innerHTML = `
+
+                <div class="transaction-left">
+
+                    <div class="transaction-description">
+                        ${escapeHtml(
+                            transaction.description ||
+                            '수입'
+                        )}
+                    </div>
+
+                    <div class="transaction-date">
+                        ${transaction.transaction_date}
+                    </div>
+
+                </div>
+
+                <div class="transaction-amount">
+                    +${formatNumber(amount)}원
+                </div>
+
+            `;
+
+
+            incomeList.appendChild(item);
+
+        });
+
+    }
+
+
+    /* =========================
+       지출
+       ========================= */
+
+    if (!expenseData.length) {
+
+        expenseList.innerHTML = `
+            <div class="empty">
+                지출 내역이 없습니다.
+            </div>
+        `;
+
+    } else {
+
+        expenseData.forEach(transaction => {
+
+            const amount =
+                Number(transaction.total_amount);
+
+            expenseTotal += amount;
+
+
+            const item =
+                document.createElement('div');
+
+            item.className =
+                'transaction-item';
+
+
+            item.innerHTML = `
+
+                <div class="transaction-left">
+
+                    <div class="transaction-description">
+                        ${escapeHtml(
+                            transaction.description ||
+                            '지출'
+                        )}
+                    </div>
+
+                    <div class="transaction-date">
+                        ${transaction.transaction_date}
+                    </div>
+
+                </div>
+
+                <div class="transaction-amount">
+                    -${formatNumber(amount)}원
+                </div>
+
+            `;
+
+
+            expenseList.appendChild(item);
+
+        });
+
+    }
+
+
+    /* =========================
+       이체
+       ========================= */
+
+    if (!transferData.length) {
+
+        transferList.innerHTML = `
+            <div class="empty">
+                이체 내역이 없습니다.
+            </div>
+        `;
+
+    } else {
+
+        transferData.forEach(transaction => {
+
+            const amount =
+                Number(transaction.total_amount);
+
+            const item =
+                document.createElement('div');
+
+            item.className =
+                'transaction-item';
+
+            item.innerHTML = `
+
+                <div class="transaction-left">
+
+                    <div class="transaction-description">
+                        ${escapeHtml(
+                            transaction.description ||
+                            '이체'
+                        )}
+                    </div>
+
+                    <div class="transaction-date">
+                        ${transaction.transaction_date}
+                    </div>
+
+                </div>
+
+                <div class="transaction-amount">
+                    ${formatNumber(amount)}원
+                </div>
+
+            `;
+
+            transferList.appendChild(item);
+
+        });
+
+    }
+
+
+    /* =========================
+       월별 합계
+       ========================= */
+
+	const balance =
+		incomeTotal - expenseTotal;
+
+	monthlyIncome.textContent =
+		`+${formatNumber(incomeTotal)}원`;
+
+	monthlyExpense.textContent =
+		`-${formatNumber(expenseTotal)}원`;
+
+	monthlyBalanceElement.textContent =
+		`${balance >= 0 ? '+' : ''}${formatNumber(balance)}원`;
+
+}
+
+/* =========================================================
+   계좌별 거래내역 조회
+   ========================================================= */
+
+async function loadAccountTransactions(accountId) {
+
+    const {
+        data,
+        error
+    } = await client
+        .from('transaction_entries')
+        .select(`
+            entry_type,
+            amount,
+            transactions!inner(
+                id,
+                transaction_date,
+                transaction_type,
+                description,
+                total_amount,
+                status
+            )
+        `)
+        .eq(
+            'account_id',
+            accountId
+        )
+        .eq(
+            'transactions.household_id',
+            TEST_HOUSEHOLD_ID
+        )
+        .eq(
+            'transactions.status',
+            'CONFIRMED'
+        )
+        .order(
+            'transaction_date',
+            {
+                referencedTable: 'transactions',
+                ascending: false
+            }
+        );
+
+    if (error) {
+        console.error(error);
+        return [];
+    }
+
+    return data || [];
+}
+
+async function showAccountTransactions(
+    accountId,
+    accountName
+) {
+
+    selectedAccountName.textContent =
+        accountName;
+
+    accountTransactionCard.classList.remove(
+        'hidden'
+    );
+
+    accountTransactionList.innerHTML = `
+        <div class="empty">
+            거래 내역을 불러오는 중입니다.
+        </div>
+    `;
+
+    const data =
+        await loadAccountTransactions(
+            accountId
+        );
+
+    accountTransactionList.innerHTML = '';
+
+    if (!data.length) {
+
+        accountTransactionList.innerHTML = `
+            <div class="empty">
+                거래 내역이 없습니다.
+            </div>
+        `;
+
+        return;
+    }
+
+    data.forEach(entry => {
+
+        const transaction =
+            entry.transactions;
+
+        const amount =
+            getAccountTransactionAmount(
+                entry
+            );
+
+        const item =
+            document.createElement('div');
+
+        item.className =
+            'transaction-item';
+
+        item.innerHTML = `
+            <div class="transaction-left">
+
+                <div class="transaction-description">
+                    ${escapeHtml(
+                        transaction.description ||
+                        '거래'
+                    )}
+                </div>
+
+                <div class="transaction-date">
+                    ${transaction.transaction_date}
+                </div>
+
+            </div>
+
+            <div class="transaction-amount">
+                ${
+                    amount >= 0
+                        ? '+'
+                        : ''
+                }${formatNumber(amount)}원
+            </div>
+        `;
+
+        accountTransactionList.appendChild(
+            item
+        );
+    });
+}
+
+/* =========================================================
+   입출금 방향 계산
+   ========================================================= */
+   
+function getAccountTransactionAmount(entry) {
+
+    const amount =
+        Number(entry.amount || 0);
+
+    if (entry.entry_type === 'DEBIT') {
+        return amount;
+    }
+
+    return -amount;
+}
+
+/* =========================================================
+   숫자 포맷
+   ========================================================= */
+
+function formatNumber(value) {
+
+    return Number(value)
+        .toLocaleString('ko-KR');
+
+}
+
+
+/* =========================================================
+   HTML escape
+   ========================================================= */
+
+function escapeHtml(value) {
+
+    return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+
+}
+
+
+/* =========================================================
+   인증 상태 확인
+   ========================================================= */
+
+async function initialize() {
+
+    const {
+        data
+    } = await client.auth.getSession();
+
+
+    if (data.session?.user) {
+
+        await showApp(
+            data.session.user
+        );
+
+    } else {
+
+        showLogin();
+
+    }
+
+
+    loading.classList.add('hidden');
+
+}
+
+
+/* =========================================================
+   인증 상태 변경 감지
+   ========================================================= */
+
+client.auth.onAuthStateChange(
+    async (event, session) => {
+
+        if (
+            event === 'SIGNED_IN' &&
+            session?.user
+        ) {
+
+            await showApp(
+                session.user
+            );
+
+        }
+
+        if (
+            event === 'SIGNED_OUT'
+        ) {
+
+            showLogin();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   시작
+   ========================================================= */
+
+initialize();
+
+</script>
+
+</body>
+</html>
+```
