@@ -286,6 +286,33 @@
             white-space: nowrap;
             margin-left: 20px;
         }
+		
+		.transaction-actions {
+		    display: flex;
+		    align-items: center;
+		    gap: 8px;
+		    margin-left: 12px;
+		}
+		
+		.transaction-cancel-btn {
+		    border: 1px solid #ddd;
+		    background: #fff;
+		    color: #888;
+		    padding: 6px 9px;
+		    border-radius: 7px;
+		    font-size: 12px;
+		    cursor: pointer;
+		}
+		
+		.transaction-cancel-btn:hover {
+		    background: #f7f7f7;
+		    color: #555;
+		}
+		
+		.transaction-cancel-btn:disabled {
+		    opacity: 0.5;
+		    cursor: default;
+		}
 
         .empty {
             padding: 30px 0;
@@ -333,6 +360,319 @@
                 font-size: 28px;
             }
         }
+		
+		/* =========================================================
+		   거래 상세 모달
+		   ========================================================= */
+
+		.transaction-detail-modal {
+			position: fixed;
+			inset: 0;
+			z-index: 9999;
+		}
+
+		.transaction-detail-backdrop {
+			position: absolute;
+			inset: 0;
+			background: rgba(0, 0, 0, 0.35);
+		}
+
+		.transaction-detail-panel {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			width: calc(100% - 40px);
+			max-width: 420px;
+			transform: translate(-50%, -50%);
+
+			background: #fff;
+			border-radius: 14px;
+
+			box-shadow:
+				0 15px 40px rgba(0, 0, 0, 0.18);
+
+			overflow: hidden;
+		}
+
+		.transaction-detail-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+
+			padding: 18px 20px;
+
+			border-bottom: 1px solid #eee;
+		}
+
+		.transaction-detail-header strong {
+			font-size: 17px;
+		}
+
+		.transaction-detail-close {
+			border: 0;
+			background: transparent;
+
+			font-size: 24px;
+			line-height: 1;
+
+			color: #777;
+			cursor: pointer;
+
+			padding: 2px 4px;
+		}
+
+		.transaction-detail-body {
+			padding: 8px 20px;
+		}
+
+		.transaction-detail-row {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+
+			gap: 20px;
+
+			padding: 15px 0;
+
+			border-bottom: 1px solid #f1f1f1;
+		}
+
+		.transaction-detail-row:last-child {
+			border-bottom: 0;
+		}
+
+		.transaction-detail-row span {
+			color: #888;
+			font-size: 14px;
+		}
+
+		.transaction-detail-row strong {
+			font-size: 14px;
+			text-align: right;
+			word-break: break-word;
+		}
+
+		.transaction-detail-footer {
+			display: flex;
+			justify-content: flex-end;
+
+			padding: 14px 20px;
+
+			border-top: 1px solid #eee;
+		}
+
+		.detail-close-btn {
+			border: 1px solid #ddd;
+			background: #fff;
+
+			padding: 8px 16px;
+
+			border-radius: 8px;
+
+			font-size: 13px;
+			cursor: pointer;
+		}
+
+		.detail-close-btn:hover {
+			background: #f7f7f7;
+		}
+		
+		/* =========================================================
+		   거래 상세 - 실제 거래내역
+		   ========================================================= */
+
+		.transaction-detail-section {
+			margin-top: 18px;
+			padding-top: 18px;
+
+			border-top: 1px solid #eee;
+		}
+
+		.transaction-detail-section-title {
+			margin-bottom: 10px;
+
+			font-size: 14px;
+			font-weight: 600;
+		}
+
+		.transaction-entry-list {
+			display: flex;
+			flex-direction: column;
+
+			gap: 8px;
+		}
+
+		.transaction-entry-row {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+
+			gap: 16px;
+
+			padding: 12px;
+
+			background: #f8f8f8;
+
+			border-radius: 8px;
+		}
+
+		.transaction-entry-account {
+			display: flex;
+			flex-direction: column;
+
+			gap: 3px;
+
+			min-width: 0;
+		}
+
+		.transaction-entry-account strong {
+			font-size: 13px;
+
+			word-break: break-word;
+		}
+
+		.transaction-entry-account span {
+			font-size: 11px;
+
+			color: #999;
+		}
+
+		.transaction-entry-value {
+			display: flex;
+			flex-direction: column;
+
+			align-items: flex-end;
+
+			gap: 3px;
+
+			flex-shrink: 0;
+		}
+
+		.transaction-entry-value span {
+			font-size: 11px;
+
+			color: #999;
+		}
+
+		.transaction-entry-value strong {
+			font-size: 13px;
+		}
+
+		.transaction-entry-empty {
+			padding: 15px;
+
+			text-align: center;
+
+			color: #999;
+
+			font-size: 13px;
+		}
+		
+		/* =========================================================
+		   거래 수정
+		   ========================================================= */
+
+		.transaction-detail-footer {
+			display: flex;
+			justify-content: flex-end;
+			align-items: center;
+
+			gap: 8px;
+
+			padding: 14px 20px;
+
+			border-top: 1px solid #eee;
+		}
+
+		.detail-edit-btn {
+			border: 0;
+
+			background: #333;
+			color: #fff;
+
+			padding: 8px 16px;
+
+			border-radius: 8px;
+
+			font-size: 13px;
+
+			cursor: pointer;
+		}
+
+		.detail-edit-btn:hover {
+			background: #222;
+		}
+
+		.transaction-edit-type {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+
+			padding: 12px 0;
+
+			margin-bottom: 10px;
+
+			border-bottom: 1px solid #eee;
+		}
+
+		.transaction-edit-type span {
+			color: #888;
+			font-size: 14px;
+		}
+
+		.transaction-edit-type strong {
+			font-size: 14px;
+		}
+
+		.transaction-edit-field {
+			display: flex;
+			flex-direction: column;
+
+			gap: 7px;
+
+			margin-bottom: 15px;
+		}
+
+		.transaction-edit-field label {
+			font-size: 13px;
+			color: #777;
+		}
+
+		.transaction-edit-field input,
+		.transaction-edit-field select {
+			width: 100%;
+			box-sizing: border-box;
+
+			padding: 10px 11px;
+
+			border: 1px solid #ddd;
+			border-radius: 8px;
+
+			background: #fff;
+
+			font-size: 14px;
+
+			outline: none;
+		}
+
+		.transaction-edit-field input:focus,
+		.transaction-edit-field select:focus {
+			border-color: #aaa;
+		}
+
+		.transaction-edit-entries {
+			margin-top: 18px;
+			padding-top: 18px;
+
+			border-top: 1px solid #eee;
+		}
+		
+		.transaction-edit-accounts {
+			margin-top: 18px;
+			padding-top: 18px;
+
+			border-top: 1px solid #eee;
+		}
     </style>
 </head>
 
@@ -1711,7 +2051,19 @@ async function loadAccounts() {
                     ${formatNumber(Math.abs(balance))}원
                 </div>
             `;
-
+			
+			item.style.cursor = 'pointer';
+			
+			item.addEventListener(
+			    'click',
+			    () => {
+			        showAccountTransactions(
+			            account.account_id,
+			            account.account_name
+			        );
+			    }
+			);
+			
             liabilityAccountList.appendChild(item);
 
 			totalLiabilities += Math.abs(
@@ -2190,6 +2542,59 @@ transferForm.addEventListener(
 );
 
 /* =========================================================
+   거래 취소
+   ========================================================= */
+
+async function cancelTransaction(transactionId) {
+
+    const confirmed =
+        confirm(
+            '이 거래를 취소하시겠습니까?\n\n' +
+            '취소된 거래는 잔액과 통계에서 제외됩니다.'
+        );
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    const {
+        data,
+        error
+    } = await client.rpc(
+        'cancel_transaction',
+        {
+            p_household_id:
+                TEST_HOUSEHOLD_ID,
+
+            p_transaction_id:
+                transactionId
+        }
+    );
+
+
+    if (error) {
+
+        console.error(error);
+
+        alert(
+            '거래 취소에 실패했습니다.\n\n' +
+            error.message
+        );
+
+        return;
+    }
+
+
+    alert('거래가 취소되었습니다.');
+
+
+    await loadTransactions();
+
+    await loadAccounts();
+}
+	
+/* =========================================================
    이번 달 거래 조회
    ========================================================= */
 
@@ -2213,7 +2618,8 @@ async function loadTransactions() {
             transaction_type,
             description,
             total_amount,
-            status
+            status,
+			category_id
         `)
         .eq(
             'household_id',
@@ -2323,32 +2729,64 @@ async function loadTransactions() {
 
             item.className =
                 'transaction-item';
+				
+			item.style.cursor = 'pointer';
 
+			item.addEventListener(
+				'click',
+				() => {
+					showTransactionDetail(transaction);
+				}
+			);
 
             item.innerHTML = `
 
-                <div class="transaction-left">
-
-                    <div class="transaction-description">
-                        ${escapeHtml(
-                            transaction.description ||
-                            '수입'
-                        )}
-                    </div>
-
-                    <div class="transaction-date">
-                        ${transaction.transaction_date}
-                    </div>
-
-                </div>
-
-                <div class="transaction-amount">
-                    +${formatNumber(amount)}원
-                </div>
-
-            `;
-
-
+				<div class="transaction-left">
+			
+					<div class="transaction-description">
+						${escapeHtml(
+							transaction.description ||
+							'수입'
+						)}
+					</div>
+			
+					<div class="transaction-date">
+						${transaction.transaction_date}
+					</div>
+			
+				</div>
+			
+				<div class="transaction-actions">
+			
+					<div class="transaction-amount">
+						+${formatNumber(amount)}원
+					</div>
+			
+					<button
+						type="button"
+						class="transaction-cancel-btn"
+					>
+						취소
+					</button>
+			
+				</div>
+			
+			`;
+			
+			const cancelButton =
+			    item.querySelector(
+			        '.transaction-cancel-btn'
+			    );
+			
+			cancelButton.addEventListener(
+			    'click',
+			    () => {
+			        cancelTransaction(
+			            transaction.id
+			        );
+			    }
+			);
+			
             incomeList.appendChild(item);
 
         });
@@ -2383,7 +2821,15 @@ async function loadTransactions() {
 
             item.className =
                 'transaction-item';
+				
+			item.style.cursor = 'pointer';
 
+			item.addEventListener(
+				'click',
+				() => {
+					showTransactionDetail(transaction);
+				}
+			);
 
             item.innerHTML = `
 
@@ -2402,12 +2848,36 @@ async function loadTransactions() {
 
                 </div>
 
-                <div class="transaction-amount">
-                    -${formatNumber(amount)}원
-                </div>
+				<div class="transaction-actions">
+				
+				    <div class="transaction-amount">
+				        -${formatNumber(amount)}원
+				    </div>
+				
+				    <button
+				        type="button"
+				        class="transaction-cancel-btn"
+				    >
+				        취소
+				    </button>
+				
+				</div>
 
             `;
-
+			
+			const cancelButton =
+			    item.querySelector(
+			        '.transaction-cancel-btn'
+			    );
+			
+			cancelButton.addEventListener(
+			    'click',
+			    () => {
+			        cancelTransaction(
+			            transaction.id
+			        );
+			    }
+			);
 
             expenseList.appendChild(item);
 
@@ -2440,6 +2910,16 @@ async function loadTransactions() {
 
             item.className =
                 'transaction-item';
+				
+			item.style.cursor = 'pointer';
+
+			item.addEventListener(
+				'click',
+				() => {
+					showTransactionDetail(transaction);
+				}
+			);
+
 
             item.innerHTML = `
 
@@ -2458,12 +2938,37 @@ async function loadTransactions() {
 
                 </div>
 
-                <div class="transaction-amount">
-                    ${formatNumber(amount)}원
-                </div>
+				<div class="transaction-actions">
+				
+				    <div class="transaction-amount">
+				        ${formatNumber(amount)}원
+				    </div>
+				
+				    <button
+				        type="button"
+				        class="transaction-cancel-btn"
+				    >
+				        취소
+				    </button>
+				
+				</div>
 
             `;
-
+			
+			const cancelButton =
+			    item.querySelector(
+			        '.transaction-cancel-btn'
+			    );
+			
+			cancelButton.addEventListener(
+			    'click',
+			    () => {
+			        cancelTransaction(
+			            transaction.id
+			        );
+			    }
+			);
+			
             transferList.appendChild(item);
 
         });
@@ -2490,6 +2995,1266 @@ async function loadTransactions() {
 }
 
 /* =========================================================
+   거래 상세
+   ========================================================= */
+
+async function showTransactionDetail(transaction) {
+
+    /*
+     * 거래에 연결된 실제 분개 내역 조회
+     *
+     * transaction_entries
+     *      ↓
+     * accounts
+     *      ↓
+     * categories
+     */
+
+    const {
+        data: entries,
+        error
+    } = await client
+        .from('transaction_entries')
+        .select(`
+            id,
+            entry_type,
+            amount,
+            accounts!inner(
+                id,
+                name,
+                account_type,
+                category_id
+            )
+        `)
+        .eq(
+            'transaction_id',
+            transaction.id
+        )
+        .order(
+            'entry_type'
+        );
+
+    if (error) {
+
+        console.error(error);
+
+        alert(
+            '거래 상세를 불러오지 못했습니다.\n\n' +
+            error.message
+        );
+
+        return;
+    }
+
+
+    /*
+     * 카테고리 조회
+     *
+     * 거래 자체에 저장된 category_id를 사용한다.
+     */
+
+    let categoryName = '-';
+
+    if (transaction.category_id) {
+
+        const {
+            data: category,
+            error: categoryError
+        } = await client
+            .from('categories')
+            .select(`
+                id,
+                name
+            `)
+            .eq(
+                'id',
+                transaction.category_id
+            )
+            .maybeSingle();
+
+        if (categoryError) {
+
+            console.error(categoryError);
+
+        } else if (category) {
+
+            categoryName =
+                category.name;
+        }
+    }
+
+
+    const typeName = {
+
+        INCOME: '수입',
+
+        EXPENSE: '지출',
+
+        TRANSFER: '이체',
+
+        CARD_EXPENSE: '카드 지출',
+
+        CARD_PAYMENT: '카드 결제'
+
+    };
+
+
+    const type =
+        typeName[
+            transaction.transaction_type
+        ]
+        || transaction.transaction_type;
+
+
+    const amount =
+        Number(
+            transaction.total_amount || 0
+        );
+
+
+    /*
+     * 실제 거래내역 표시
+     */
+
+    const entryHtml =
+        entries && entries.length
+            ? entries.map(entry => {
+
+                const account =
+                    entry.accounts;
+
+                const entryType =
+                    entry.entry_type === 'DEBIT'
+                        ? '차변'
+                        : '대변';
+
+                return `
+                    <div class="transaction-entry-row">
+
+                        <div class="transaction-entry-account">
+                            <strong>
+                                ${account.name}
+                            </strong>
+
+                            <span>
+                                ${account.account_type}
+                            </span>
+                        </div>
+
+                        <div class="transaction-entry-value">
+
+                            <span>
+                                ${entryType}
+                            </span>
+
+                            <strong>
+                                ${formatNumber(
+                                    Number(entry.amount || 0)
+                                )}원
+                            </strong>
+
+                        </div>
+
+                    </div>
+                `;
+
+            }).join('')
+
+            : `
+                <div class="transaction-entry-empty">
+                    거래내역이 없습니다.
+                </div>
+            `;
+
+
+    /*
+     * 모달 생성
+     */
+
+    const modal =
+        document.createElement('div');
+
+    modal.className =
+        'transaction-detail-modal';
+
+
+    modal.innerHTML = `
+
+        <div class="transaction-detail-backdrop"></div>
+
+        <div class="transaction-detail-panel">
+
+            <div class="transaction-detail-header">
+
+                <strong>
+                    거래 상세
+                </strong>
+
+                <button
+                    type="button"
+                    class="transaction-detail-close">
+                    ×
+                </button>
+
+            </div>
+
+
+            <div class="transaction-detail-body">
+
+                <div class="transaction-detail-row">
+
+                    <span>
+                        날짜
+                    </span>
+
+                    <strong>
+                        ${transaction.transaction_date}
+                    </strong>
+
+                </div>
+
+
+                <div class="transaction-detail-row">
+
+                    <span>
+                        구분
+                    </span>
+
+                    <strong>
+                        ${type}
+                    </strong>
+
+                </div>
+
+
+                <div class="transaction-detail-row">
+
+                    <span>
+                        내용
+                    </span>
+
+                    <strong>
+                        ${transaction.description || '-'}
+                    </strong>
+
+                </div>
+
+
+                <div class="transaction-detail-row">
+
+                    <span>
+                        카테고리
+                    </span>
+
+                    <strong>
+                        ${categoryName}
+                    </strong>
+
+                </div>
+
+
+                <div class="transaction-detail-row">
+
+                    <span>
+                        금액
+                    </span>
+
+                    <strong>
+                        ${formatNumber(amount)}원
+                    </strong>
+
+                </div>
+
+
+                <div class="transaction-detail-row">
+
+                    <span>
+                        상태
+                    </span>
+
+                    <strong>
+                        ${
+                            transaction.status === 'CONFIRMED'
+                                ? '정상'
+                                : transaction.status
+                        }
+                    </strong>
+
+                </div>
+
+
+                <!-- 실제 거래내역 -->
+
+                <div class="transaction-detail-section">
+
+                    <div class="transaction-detail-section-title">
+                        실제 거래내역
+                    </div>
+
+                    <div class="transaction-entry-list">
+
+                        ${entryHtml}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+			<div class="transaction-detail-footer">
+
+				<button
+					type="button"
+					class="transaction-detail-edit detail-edit-btn">
+					수정
+				</button>
+
+				<button
+					type="button"
+					class="transaction-detail-close detail-close-btn">
+					닫기
+				</button>
+
+			</div>
+
+        </div>
+    `;
+
+
+    document.body.appendChild(modal);
+
+
+    /*
+     * 모달 닫기
+     */
+
+    const closeModal = () => {
+
+        modal.remove();
+
+    };
+
+
+    modal
+        .querySelectorAll(
+            '.transaction-detail-close'
+        )
+        .forEach(button => {
+
+            button.addEventListener(
+                'click',
+                closeModal
+            );
+
+        });
+
+
+    modal
+        .querySelector(
+            '.transaction-detail-backdrop'
+        )
+        .addEventListener(
+            'click',
+            closeModal
+        );
+
+	modal
+		.querySelector(
+			'.transaction-detail-edit'
+		)
+		.addEventListener(
+			'click',
+			() => {
+				openTransactionEdit(
+					transaction,
+					entries,
+					categoryName
+				);
+			}
+		);
+		
+}
+
+/* =========================================================
+   거래 수정 화면
+   ========================================================= */
+
+async function openTransactionEdit(
+    transaction,
+    entries,
+    categoryName
+) {
+
+    /*
+     * 현재는 화면만 만든다.
+     *
+     * 실제 저장은 다음 단계에서
+     * update_transaction RPC와 연결한다.
+     */
+
+    const typeName = {
+        INCOME: '수입',
+        EXPENSE: '지출',
+        TRANSFER: '이체',
+        CARD_EXPENSE: '카드 지출',
+        CARD_PAYMENT: '카드 결제'
+    };
+
+    const type =
+        typeName[
+            transaction.transaction_type
+        ]
+        || transaction.transaction_type;
+
+
+    const modal =
+        document.createElement('div');
+
+    modal.className =
+        'transaction-detail-modal';
+
+
+    modal.innerHTML = `
+
+        <div class="transaction-detail-backdrop"></div>
+
+        <div class="transaction-detail-panel">
+
+            <div class="transaction-detail-header">
+
+                <strong>
+                    거래 수정
+                </strong>
+
+                <button
+                    type="button"
+                    class="transaction-edit-close">
+                    ×
+                </button>
+
+            </div>
+
+
+            <div class="transaction-detail-body">
+
+                <div class="transaction-edit-type">
+
+                    <span>거래 유형</span>
+
+                    <strong>
+                        ${type}
+                    </strong>
+
+                </div>
+
+
+                <div class="transaction-edit-field">
+
+                    <label>
+                        날짜
+                    </label>
+
+                    <input
+                        type="date"
+                        id="edit-transaction-date"
+                        value="${transaction.transaction_date}"
+                    >
+
+                </div>
+
+
+                <div class="transaction-edit-field">
+
+                    <label>
+                        내용
+                    </label>
+
+                    <input
+                        type="text"
+                        id="edit-transaction-description"
+                        value="${
+                            transaction.description || ''
+                        }"
+                    >
+
+                </div>
+
+
+                <div class="transaction-edit-field">
+
+                    <label>
+                        금액
+                    </label>
+
+                    <input
+                        type="number"
+                        id="edit-transaction-amount"
+                        value="${transaction.total_amount}"
+                        min="1"
+                    >
+
+                </div>
+
+
+                <div class="transaction-edit-field">
+
+                    <label>
+                        카테고리
+                    </label>
+
+                    <select
+                        id="edit-transaction-category">
+
+                        <option value="">
+                            선택하세요
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+				<div class="transaction-edit-accounts">
+
+					${
+						transaction.transaction_type === 'TRANSFER'
+							? `
+
+								<div class="transaction-edit-field">
+
+									<label>
+										출금 계좌
+									</label>
+
+									<select
+										id="edit-source-account">
+										<option value="">
+											선택하세요
+										</option>
+									</select>
+
+								</div>
+
+
+								<div class="transaction-edit-field">
+
+									<label>
+										입금 계좌
+									</label>
+
+									<select
+										id="edit-target-account">
+										<option value="">
+											선택하세요
+										</option>
+									</select>
+
+								</div>
+
+							`
+							: `
+
+								<div class="transaction-edit-field">
+
+									<label>
+										${
+											transaction.transaction_type === 'INCOME'
+												? '입금 계좌'
+												: '출금 계좌'
+										}
+									</label>
+
+									<select
+										id="edit-account">
+										<option value="">
+											선택하세요
+										</option>
+									</select>
+
+								</div>
+
+							`
+					}
+
+				</div>
+
+            </div>
+
+
+            <div class="transaction-detail-footer">
+
+                <button
+                    type="button"
+                    class="transaction-edit-cancel detail-close-btn">
+                    취소
+                </button>
+
+                <button
+                    type="button"
+                    class="transaction-edit-save detail-edit-btn">
+                    저장
+                </button>
+
+            </div>
+
+        </div>
+    `;
+
+
+    document.body.appendChild(modal);
+
+
+    /*
+     * 카테고리 조회
+     */
+
+    const categorySelect =
+        modal.querySelector(
+            '#edit-transaction-category'
+        );
+
+
+    const {
+        data: categories,
+        error: categoryError
+    } = await client
+        .from('categories')
+        .select(`
+            id,
+            name,
+            account_type,
+            parent_id,
+            display_order
+        `)
+        .eq(
+            'household_id',
+            TEST_HOUSEHOLD_ID
+        )
+        .eq(
+            'is_active',
+            true
+        )
+        .eq(
+            'account_type',
+            transaction.transaction_type === 'INCOME'
+                ? 'INCOME'
+                : 'EXPENSE'
+        )
+        .not(
+            'parent_id',
+            'is',
+            null
+        )
+        .order(
+            'display_order'
+        );
+
+
+    if (categoryError) {
+
+        console.error(categoryError);
+
+    } else {
+
+        categories.forEach(category => {
+
+            const option =
+                document.createElement('option');
+
+            option.value =
+                category.id;
+
+            option.textContent =
+                category.name;
+
+            if (
+                category.id ===
+                transaction.category_id
+            ) {
+                option.selected = true;
+            }
+
+            categorySelect.appendChild(
+                option
+            );
+
+        });
+
+    }
+	/*
+	 * 거래에 사용할 계좌 조회
+	 *
+	 * INCOME
+	 *   → ASSET / SAVING
+	 *
+	 * EXPENSE
+	 *   → ASSET / SAVING
+	 *
+	 * TRANSFER
+	 *   → ASSET / SAVING
+	 */
+
+	const {
+		data: accounts,
+		error: accountError
+	} = await client
+		.from('accounts')
+		.select(`
+			id,
+			name,
+			account_type,
+			is_active
+		`)
+		.eq(
+			'household_id',
+			TEST_HOUSEHOLD_ID
+		)
+		.eq(
+			'is_active',
+			true
+		)
+		.in(
+			'account_type',
+			[
+				'ASSET',
+				'SAVING'
+			]
+		)
+		.order(
+			'name'
+		);
+
+
+	if (accountError) {
+
+		console.error(accountError);
+
+		alert(
+			'계좌 목록을 불러오지 못했습니다.\n\n' +
+			accountError.message
+		);
+
+		modal.remove();
+
+		return;
+	}
+
+
+	/*
+	 * 기존 entries에서 실제 계좌 찾기
+	 */
+
+	const debitEntry =
+		entries.find(
+			entry =>
+				entry.entry_type === 'DEBIT'
+		);
+
+	const creditEntry =
+		entries.find(
+			entry =>
+				entry.entry_type === 'CREDIT'
+		);
+
+
+	/*
+	 * 수입
+	 *
+	 * ASSET / SAVING DEBIT
+	 */
+
+	if (
+		transaction.transaction_type ===
+		'INCOME'
+	) {
+
+		const accountSelect =
+			modal.querySelector(
+				'#edit-account'
+			);
+
+		accounts.forEach(account => {
+
+			const option =
+				document.createElement('option');
+
+			option.value =
+				account.id;
+
+			option.textContent =
+				account.name;
+
+			if (
+				debitEntry &&
+				debitEntry.accounts &&
+				debitEntry.accounts.id ===
+					account.id
+			) {
+				option.selected = true;
+			}
+
+			accountSelect.appendChild(
+				option
+			);
+
+		});
+	}
+
+
+	/*
+	 * 지출
+	 *
+	 * ASSET / SAVING CREDIT
+	 */
+
+	if (
+		transaction.transaction_type ===
+		'EXPENSE'
+	) {
+
+		const accountSelect =
+			modal.querySelector(
+				'#edit-account'
+			);
+
+		accounts.forEach(account => {
+
+			const option =
+				document.createElement('option');
+
+			option.value =
+				account.id;
+
+			option.textContent =
+				account.name;
+
+			if (
+				creditEntry &&
+				creditEntry.accounts &&
+				creditEntry.accounts.id ===
+					account.id
+			) {
+				option.selected = true;
+			}
+
+			accountSelect.appendChild(
+				option
+			);
+
+		});
+	}
+
+
+	/*
+	 * 이체
+	 *
+	 * 출금 = CREDIT
+	 * 입금 = DEBIT
+	 */
+
+	if (
+		transaction.transaction_type ===
+		'TRANSFER'
+	) {
+
+		const sourceSelect =
+			modal.querySelector(
+				'#edit-source-account'
+			);
+
+		const targetSelect =
+			modal.querySelector(
+				'#edit-target-account'
+			);
+
+
+		accounts.forEach(account => {
+
+			const sourceOption =
+				document.createElement(
+					'option'
+				);
+
+			sourceOption.value =
+				account.id;
+
+			sourceOption.textContent =
+				account.name;
+
+			if (
+				creditEntry &&
+				creditEntry.accounts &&
+				creditEntry.accounts.id ===
+					account.id
+			) {
+				sourceOption.selected = true;
+			}
+
+			sourceSelect.appendChild(
+				sourceOption
+			);
+
+
+			const targetOption =
+				document.createElement(
+					'option'
+				);
+
+			targetOption.value =
+				account.id;
+
+			targetOption.textContent =
+				account.name;
+
+			if (
+				debitEntry &&
+				debitEntry.accounts &&
+				debitEntry.accounts.id ===
+					account.id
+			) {
+				targetOption.selected = true;
+			}
+
+			targetSelect.appendChild(
+				targetOption
+			);
+
+		});
+	}
+
+    /*
+     * 닫기
+     */
+
+    const closeModal = () => {
+
+        modal.remove();
+
+    };
+
+
+    modal
+        .querySelector(
+            '.transaction-edit-close'
+        )
+        .addEventListener(
+            'click',
+            closeModal
+        );
+
+
+    modal
+        .querySelector(
+            '.transaction-edit-cancel'
+        )
+        .addEventListener(
+            'click',
+            closeModal
+        );
+
+
+    /*
+     * 저장
+     *
+     */
+
+	modal
+		.querySelector('.transaction-edit-save')
+		.addEventListener(
+			'click',
+			async () => {
+
+				const date =
+					modal.querySelector(
+						'#edit-transaction-date'
+					).value;
+
+				const description =
+					modal.querySelector(
+						'#edit-transaction-description'
+					).value.trim();
+
+				const amount =
+					Number(
+						modal.querySelector(
+							'#edit-transaction-amount'
+						).value
+					);
+
+				const categoryId =
+					modal.querySelector(
+						'#edit-transaction-category'
+					).value || null;
+
+
+				if (!date) {
+					alert('날짜를 입력해주세요.');
+					return;
+				}
+
+				if (!amount || amount <= 0) {
+					alert('금액을 확인해주세요.');
+					return;
+				}
+
+
+				let updatedEntries = [];
+
+
+				/* =========================================
+				   수입
+				   ========================================= */
+
+				if (
+					transaction.transaction_type ===
+					'INCOME'
+				) {
+
+					const accountId =
+						modal.querySelector(
+							'#edit-account'
+						).value;
+
+					if (!accountId) {
+						alert('입금 계좌를 선택해주세요.');
+						return;
+					}
+
+
+					const incomeEntry =
+						entries.find(
+							entry =>
+								entry.accounts?.account_type ===
+								'INCOME'
+						);
+
+
+					if (!incomeEntry) {
+						alert(
+							'기존 수입 계정을 찾을 수 없습니다.'
+						);
+						return;
+					}
+
+
+					updatedEntries = [
+						{
+							account_id:
+								accountId,
+
+							entry_type:
+								'DEBIT',
+
+							amount:
+								amount
+						},
+						{
+							account_id:
+								incomeEntry.accounts.id,
+
+							entry_type:
+								'CREDIT',
+
+							amount:
+								amount
+						}
+					];
+
+				}
+
+
+				/* =========================================
+				   지출
+				   ========================================= */
+
+				else if (
+					transaction.transaction_type ===
+					'EXPENSE'
+				) {
+
+					const accountId =
+						modal.querySelector(
+							'#edit-account'
+						).value;
+
+					if (!accountId) {
+						alert('출금 계좌를 선택해주세요.');
+						return;
+					}
+
+
+					const expenseEntry =
+						entries.find(
+							entry =>
+								entry.accounts?.account_type ===
+								'EXPENSE'
+						);
+
+
+					if (!expenseEntry) {
+						alert(
+							'기존 지출 계정을 찾을 수 없습니다.'
+						);
+						return;
+					}
+
+
+					updatedEntries = [
+						{
+							account_id:
+								expenseEntry.accounts.id,
+
+							entry_type:
+								'DEBIT',
+
+							amount:
+								amount
+						},
+						{
+							account_id:
+								accountId,
+
+							entry_type:
+								'CREDIT',
+
+							amount:
+								amount
+						}
+					];
+
+				}
+
+
+				/* =========================================
+				   이체
+				   ========================================= */
+
+				else if (
+					transaction.transaction_type ===
+					'TRANSFER'
+				) {
+
+					const sourceAccountId =
+						modal.querySelector(
+							'#edit-source-account'
+						).value;
+
+					const targetAccountId =
+						modal.querySelector(
+							'#edit-target-account'
+						).value;
+
+
+					if (!sourceAccountId) {
+						alert('출금 계좌를 선택해주세요.');
+						return;
+					}
+
+					if (!targetAccountId) {
+						alert('입금 계좌를 선택해주세요.');
+						return;
+					}
+
+
+					if (
+						sourceAccountId ===
+						targetAccountId
+					) {
+						alert(
+							'출금 계좌와 입금 계좌는\n' +
+							'같을 수 없습니다.'
+						);
+						return;
+					}
+
+
+					updatedEntries = [
+						{
+							account_id:
+								sourceAccountId,
+
+							entry_type:
+								'CREDIT',
+
+							amount:
+								amount
+						},
+						{
+							account_id:
+								targetAccountId,
+
+							entry_type:
+								'DEBIT',
+
+							amount:
+								amount
+						}
+					];
+
+				}
+
+
+				const {
+					error
+				} = await client.rpc(
+					'update_transaction',
+					{
+						p_household_id:
+							TEST_HOUSEHOLD_ID,
+
+						p_transaction_id:
+							transaction.id,
+
+						p_transaction_date:
+							date,
+
+						p_transaction_type:
+							transaction.transaction_type,
+
+						p_description:
+							description,
+
+						p_total_amount:
+							amount,
+
+						p_category_id:
+							categoryId,
+
+						p_entries:
+							updatedEntries
+					}
+				);
+
+
+				if (error) {
+
+					console.error(error);
+
+					alert(
+						'거래 수정에 실패했습니다.\n\n' +
+						error.message
+					);
+
+					return;
+				}
+
+
+				alert(
+					'거래가 수정되었습니다.'
+				);
+
+
+				modal.remove();
+
+
+				await loadTransactions();
+				await loadAccounts();
+			}
+		);
+}
+
+/* =========================================================
    계좌별 거래내역 조회
    ========================================================= */
 
@@ -2503,6 +4268,9 @@ async function loadAccountTransactions(accountId) {
         .select(`
             entry_type,
             amount,
+			accounts!inner(
+				account_type
+			),
             transactions!inner(
                 id,
                 transaction_date,
@@ -2632,11 +4400,35 @@ function getAccountTransactionAmount(entry) {
     const amount =
         Number(entry.amount || 0);
 
-    if (entry.entry_type === 'DEBIT') {
-        return amount;
+    const accountType =
+        entry.accounts?.account_type;
+
+    /*
+     * 자산 / 저축
+     * DEBIT  = 증가
+     * CREDIT = 감소
+     */
+    if (
+        accountType === 'ASSET' ||
+        accountType === 'SAVING'
+    ) {
+        return entry.entry_type === 'DEBIT'
+            ? amount
+            : -amount;
     }
 
-    return -amount;
+    /*
+     * 부채
+     * CREDIT = 증가
+     * DEBIT  = 감소
+     */
+    if (accountType === 'LIABILITY') {
+        return entry.entry_type === 'CREDIT'
+            ? amount
+            : -amount;
+    }
+
+    return 0;
 }
 
 /* =========================================================
